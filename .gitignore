@@ -1,0 +1,9 @@
+# Intermediate files
+/tmp-*
+*.tmp
+
+# Test output
+/test-output/
+
+# Local development
+.env
