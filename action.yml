@@ -36,10 +36,17 @@ runs:
       shell: bash
       run: |
         source "${{ github.action_path }}/scripts/validate-inputs.sh"
-        validate_required "trakt_client_id" "${{ inputs.trakt_client_id }}"
-        validate_username "${{ inputs.trakt_username }}"
-        validate_positive_integer "history_limit" "${{ inputs.history_limit }}"
-        validate_output_path "${{ inputs.output_path }}"
+        validate_required "trakt_client_id" "$TRAKT_CLIENT_ID"
+        validate_username "$TRAKT_USERNAME"
+        validate_positive_integer "history_limit" "$TRAKT_HISTORY_LIMIT"
+        validate_output_path "$TRAKT_OUTPUT_PATH"
+        validate_tmdb_api_key "$TMDB_API_KEY"
+      env:
+        TRAKT_CLIENT_ID: ${{ inputs.trakt_client_id }}
+        TRAKT_USERNAME: ${{ inputs.trakt_username }}
+        TRAKT_HISTORY_LIMIT: ${{ inputs.history_limit }}
+        TRAKT_OUTPUT_PATH: ${{ inputs.output_path }}
+        TMDB_API_KEY: ${{ inputs.tmdb_api_key }}
 
     - name: Fetch Trakt history
       shell: bash

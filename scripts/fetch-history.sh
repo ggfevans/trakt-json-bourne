@@ -38,7 +38,7 @@ HTTP_STATUS=$(fetch_url_with_headers \
 
 if [ "$HTTP_STATUS" -ne 200 ]; then
   echo "Error: Trakt API returned HTTP ${HTTP_STATUS}" >&2
-  echo "::warning::Trakt API error response: $(head -c 500 "$TRAKT_TMPDIR/history-response.tmp" 2>/dev/null || echo 'no response body')"
+  echo "::warning::Trakt API returned HTTP ${HTTP_STATUS}. Check API credentials and username."
   rm -f "$TRAKT_TMPDIR/history-response.tmp"
   exit 1
 fi

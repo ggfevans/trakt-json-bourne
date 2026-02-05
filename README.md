@@ -26,7 +26,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - uses: ggfevans/trakt-github-action@v1
         with:
@@ -35,7 +35,7 @@ jobs:
           tmdb_api_key: ${{ secrets.TMDB_API_KEY }}
 
       - name: Commit and push
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5
         with:
           commit_message: 'chore: update watching data'
           file_pattern: src/data/watching.json
