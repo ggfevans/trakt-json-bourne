@@ -1,5 +1,12 @@
 # Security Policy
 
+## Supported Versions
+
+| Version | Supported |
+|---------|-----------|
+| 1.0.x   | Yes       |
+| < 1.0   | No        |
+
 ## Reporting a Vulnerability
 
 Do not open public issues. Email the maintainer or use GitHub's private vulnerability reporting.
