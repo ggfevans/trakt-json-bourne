@@ -17,8 +17,12 @@ POSTER_DELAY="${POSTER_DELAY:-0.25}"
 
 : "${TRAKT_TMPDIR:?must be set}"
 
+# shellcheck source=validate-inputs.sh
+source "$(dirname "$0")/validate-inputs.sh"
 # shellcheck source=http.sh
 source "$(dirname "$0")/http.sh"
+
+validate_tmdb_api_key "${TMDB_API_KEY:-}"
 
 echo '{}' > "$TRAKT_TMPDIR/posters.json"
 

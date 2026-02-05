@@ -26,6 +26,17 @@ validate_positive_integer() {
   fi
 }
 
+validate_tmdb_api_key() {
+  local key="$1"
+  if [ -z "$key" ]; then
+    return 0  # Empty = skip posters
+  fi
+  if [[ ! "$key" =~ ^[a-fA-F0-9]{32}$ ]]; then
+    echo "Error: TMDB API key must be a 32-character hex string" >&2
+    exit 1
+  fi
+}
+
 validate_output_path() {
   local resolved
   if resolved="$(realpath -m "$1" 2>/dev/null)"; then
@@ -35,10 +46,12 @@ validate_output_path() {
   else
     resolved="$(cd "$(dirname "$1")" 2>/dev/null && pwd)/$(basename "$1")"
   fi
-  if [ -n "${GITHUB_WORKSPACE:-}" ]; then
-    if [[ "$resolved" != "${GITHUB_WORKSPACE}"/* ]]; then
-      echo "Error: output_path must be within the workspace (${GITHUB_WORKSPACE}), got '${resolved}'" >&2
-      exit 1
-    fi
+  if [ -z "${GITHUB_WORKSPACE:-}" ]; then
+    echo "Error: GITHUB_WORKSPACE is not set. Cannot validate output path boundary." >&2
+    exit 1
+  fi
+  if [[ "$resolved" != "${GITHUB_WORKSPACE}"/* ]]; then
+    echo "Error: output_path must be within the workspace (${GITHUB_WORKSPACE}), got '${resolved}'" >&2
+    exit 1
   fi
 }
