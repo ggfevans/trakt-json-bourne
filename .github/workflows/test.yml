@@ -1,0 +1,66 @@
+name: Test Action
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test-action:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run action (with TMDB)
+        uses: ./
+        with:
+          trakt_client_id: ${{ secrets.TRAKT_CLIENT_ID }}
+          trakt_username: 'gvns'
+          tmdb_api_key: ${{ secrets.TMDB_API_KEY }}
+          output_path: 'test-output/watching.json'
+          history_limit: '10'
+
+      - name: Validate output
+        run: |
+          if [ ! -f "test-output/watching.json" ]; then
+            echo "Error: Output file not created"
+            exit 1
+          fi
+          jq -e '.lastUpdated' test-output/watching.json > /dev/null
+          jq -e '.recentlyWatched | type == "array"' test-output/watching.json > /dev/null
+          jq -e '.stats.moviesThisMonth | type == "number"' test-output/watching.json > /dev/null
+          jq -e '.stats.showsThisMonth | type == "number"' test-output/watching.json > /dev/null
+          echo "Output validation passed"
+          cat test-output/watching.json
+
+  test-without-tmdb:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run action (without TMDB)
+        uses: ./
+        with:
+          trakt_client_id: ${{ secrets.TRAKT_CLIENT_ID }}
+          trakt_username: 'gvns'
+          output_path: 'test-output/watching-no-posters.json'
+
+      - name: Validate null posters
+        run: |
+          FIRST_POSTER=$(jq -r '.recentlyWatched[0].posterUrl' test-output/watching-no-posters.json)
+          if [ "$FIRST_POSTER" != "null" ]; then
+            echo "Expected null posterUrl without TMDB key"
+            exit 1
+          fi
+          echo "Null poster validation passed"
+
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run ShellCheck
+        uses: ludeeus/action-shellcheck@master
+        with:
+          scandir: './scripts'
