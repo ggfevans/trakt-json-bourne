@@ -7,3 +7,6 @@
 
 # Local development
 .env
+
+# macOS
+.DS_Store

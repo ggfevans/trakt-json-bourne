@@ -1,12 +1,14 @@
-# Trakt GitHub Action
+# Trakt JSON Bourne (GitHub Action)
 
-A composite GitHub Action that fetches watch history from [Trakt](https://trakt.tv) and writes it to a structured JSON file with optional poster enrichment from TMDB.
+<p align="center">
+  <img src="static/trakt-json-bourne.png" alt="Trakt JSON Bourne" width="600">
+</p>
+
+`trakt-json-bourne` is a composite GitHub Action that slips into your workflow like Matt Damon in a bad European hallway, interrogates the [Trakt](https://trakt.tv) API, and exits with a clean JSON dossier. Optional TMDB posters are attached for the corkboard, because apparently this is an operation now.
 
 ## What it does
 
-1. Fetches your recent watch history from the Trakt API
-2. Optionally enriches items with poster images from TMDB
-3. Writes a JSON file with watch data and monthly stats
+This action runs on schedule, pulls your recent Trakt watch history, optionally enriches items with TMDB posters, and writes one structured JSON file to your repo. It is calm, repeatable, and legally distinct from sprinting across rooftops.
 
 ## Installation
 
@@ -28,7 +30,7 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
-      - uses: ggfevans/trakt-github-action@v1
+      - uses: ggfevans/trakt-json-bourne@v1
         with:
           trakt_client_id: ${{ secrets.TRAKT_CLIENT_ID }}
           trakt_username: your-trakt-username
@@ -91,6 +93,18 @@ Settings > Secrets and variables > Actions:
   }
 }
 ```
+
+## Discoverability Keywords
+
+Use these repository topics/keywords:
+- `trakt`
+- `github-action`
+- `json`
+- `watch-history`
+- `scrobble`
+- `tmdb`
+- `media-tracking`
+- `automation`
 
 ## AI Disclosure
 
