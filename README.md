@@ -8,11 +8,15 @@
 
 ## What it does
 
-This action runs on schedule, pulls your recent Trakt watch history, optionally enriches items with TMDB posters, and writes one structured JSON file to your repo. It is calm, repeatable, and legally distinct from sprinting across rooftops.
+This action is built for scheduled automation via GitHub Actions cron triggers (`on.schedule`) and manual runs (`workflow_dispatch`). It validates inputs, runs shell scripts to fetch Trakt history, optionally enriches poster metadata from TMDB, and writes normalized JSON to your configured output path. The implementation is dependency-light and shell-first (bash + curl + jq on GitHub-hosted runners), with no npm/pip install step.
 
 ## Installation
 
-Copy [`example.yml`](example.yml) to `.github/workflows/fetch-watching.yml` in your repository and replace `your-trakt-username` with your Trakt username.
+Copy [`example.yml`](example.yml) to `.github/workflows/fetch-watching.yml`, replace `your-trakt-username` with your Trakt username, and store API values as repository secrets (`TRAKT_CLIENT_ID`, optional `TMDB_API_KEY`).
+
+GitHub docs:
+- [Using secrets in GitHub Actions](https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions)
+- [Creating secrets for a repository](https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository)
 
 Or use this minimal snippet:
 
@@ -59,10 +63,16 @@ jobs:
 2. Go to Settings > API > Create > Developer
 3. Copy your API key
 
-### 3. Add secrets
+### 3. Add repository secrets
 
-Settings > Secrets and variables > Actions:
-- `TRAKT_CLIENT_ID` - Your Trakt Client ID
+Create repository secrets in **Settings > Secrets and variables > Actions**.
+
+GitHub docs:
+- [Using secrets in GitHub Actions](https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions)
+- [Creating secrets for a repository](https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository)
+
+Required/optional secrets:
+- `TRAKT_CLIENT_ID` - Your Trakt Client ID (required)
 - `TMDB_API_KEY` - Your TMDB API key (optional)
 
 ## Inputs
@@ -77,24 +87,78 @@ Settings > Secrets and variables > Actions:
 
 ## Output JSON
 
+The action writes a single JSON file with these fields:
+
+- `lastUpdated` -- ISO 8601 timestamp of when the data was generated
+- `recentlyWatched` -- array of most-recent watch entries with `title`, `type`, `posterUrl`, `url`, `watchedDate`
+- `stats` -- object with monthly totals: `moviesThisMonth`, `showsThisMonth`
+
+`recentlyWatched` items have these behaviors:
+
+- `type` is either `"movie"` or `"show"`
+- show titles are normalized as `Show Title — S01E02`
+- `posterUrl` is `null` when TMDB enrichment is disabled or no poster is available
+
+Poster enrichment status is exposed via the action output `posters_status` with one of:
+
+- `"ok"` -- poster lookup completed successfully
+- `"skipped"` -- TMDB key was not provided
+- `"partial"` -- some poster lookups failed
+- `"error"` -- poster enrichment failed completely
+
+The action fails the workflow only if Trakt history cannot be fetched or validated. TMDB poster failures are non-fatal.
+
+<details>
+<summary>Example output (5 completely normal Matt Damon watches)</summary>
+
 ```json
 {
-  "lastUpdated": "2026-02-04T00:00:00Z",
+  "lastUpdated": "2026-02-11T00:00:00Z",
   "recentlyWatched": [
     {
-      "title": "Movie Name",
+      "title": "The Bourne Ultimatum",
       "type": "movie",
-      "posterUrl": "https://image.tmdb.org/t/p/w342/path.jpg",
-      "url": "https://trakt.tv/movies/slug",
-      "watchedDate": "2026-02-03T20:00:00.000Z"
+      "posterUrl": "https://image.tmdb.org/t/p/w342/3L6N9Uj7Q9mNQ2p0hP7QWQ6G5V4.jpg",
+      "url": "https://trakt.tv/movies/the-bourne-ultimatum-2007",
+      "watchedDate": "2026-02-10T23:58:00.000Z"
+    },
+    {
+      "title": "The Bourne Supremacy",
+      "type": "movie",
+      "posterUrl": "https://image.tmdb.org/t/p/w342/kqjL17yufvn9OVLyXYpvtyrFfak.jpg",
+      "url": "https://trakt.tv/movies/the-bourne-supremacy-2004",
+      "watchedDate": "2026-02-10T22:04:00.000Z"
+    },
+    {
+      "title": "The Bourne Identity",
+      "type": "movie",
+      "posterUrl": "https://image.tmdb.org/t/p/w342/aP8swke3gmowbkfZ6lmNidu0Frh.jpg",
+      "url": "https://trakt.tv/movies/the-bourne-identity-2002",
+      "watchedDate": "2026-02-10T20:11:00.000Z"
+    },
+    {
+      "title": "The Martian",
+      "type": "movie",
+      "posterUrl": "https://image.tmdb.org/t/p/w342/5aGhaIHYuQbqlHWvWYqMCnj40y2.jpg",
+      "url": "https://trakt.tv/movies/the-martian-2015",
+      "watchedDate": "2026-02-10T17:41:00.000Z"
+    },
+    {
+      "title": "Good Will Hunting",
+      "type": "movie",
+      "posterUrl": "https://image.tmdb.org/t/p/w342/z2FnLKpFi1HPO7BEJxdkv6hpJSU.jpg",
+      "url": "https://trakt.tv/movies/good-will-hunting-1997",
+      "watchedDate": "2026-02-10T15:03:00.000Z"
     }
   ],
   "stats": {
-    "moviesThisMonth": 5,
-    "showsThisMonth": 12
+    "moviesThisMonth": 874,
+    "showsThisMonth": 0
   }
 }
 ```
+
+</details>
 
 ## Discoverability Keywords
 
@@ -110,7 +174,7 @@ Use these repository topics/keywords:
 
 ## AI Disclosure
 
-Built with assistance from AI tools (Claude).
+This project was built with the assistance of AI tools (Claude). The design, specification, and implementation were developed collaboratively with AI-generated code. All code has been reviewed and tested, but use at your own discretion.
 
 ## License
 

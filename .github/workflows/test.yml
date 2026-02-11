@@ -13,6 +13,7 @@ permissions:
 jobs:
   test-action:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
@@ -26,7 +27,10 @@ jobs:
           history_limit: '10'
 
       - name: Validate output
+        shell: bash
         run: |
+          set -euo pipefail
+
           if [ ! -f "test-output/watching.json" ]; then
             echo "Error: Output file not created"
             exit 1
@@ -40,6 +44,7 @@ jobs:
 
   test-without-tmdb:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
@@ -51,7 +56,10 @@ jobs:
           output_path: 'test-output/watching-no-posters.json'
 
       - name: Validate null posters
+        shell: bash
         run: |
+          set -euo pipefail
+
           FIRST_POSTER=$(jq -r '.recentlyWatched[0].posterUrl' test-output/watching-no-posters.json)
           if [ "$FIRST_POSTER" != "null" ]; then
             echo "Expected null posterUrl without TMDB key"
@@ -61,10 +69,29 @@ jobs:
 
   shellcheck:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Block insecure shell patterns
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if grep -RIn --include='*.sh' 'http://' scripts; then
+            echo "::error::Found insecure http:// URL in scripts. Use https:// only."
+            exit 1
+          fi
+
+          if grep -RIn --include='*.sh' -E 'curl[^[:cntrl:]]*(--insecure|[[:space:]]-k([[:space:]]|$))' scripts; then
+            echo "::error::Found insecure curl TLS flags (--insecure/-k) in scripts."
+            exit 1
+          fi
+
+          echo "Shell safety pattern checks passed"
+
       - name: Run ShellCheck
         uses: ludeeus/action-shellcheck@00cae500b08a931fb5698e11e79bfbd38e612a38 # v2.0.0
         with:
           scandir: './scripts'
-          severity: warning
+          severity: error
