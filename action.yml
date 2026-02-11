@@ -1,4 +1,4 @@
-name: 'Trakt Watching Data'
+name: 'Trakt JSON Bourne'
 description: 'Fetch watch history from Trakt and write to JSON with optional TMDB poster enrichment'
 branding:
   icon: 'film'
