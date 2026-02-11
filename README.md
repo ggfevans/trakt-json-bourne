@@ -160,18 +160,6 @@ The action fails the workflow only if Trakt history cannot be fetched or validat
 
 </details>
 
-## Discoverability Keywords
-
-Use these repository topics/keywords:
-- `trakt`
-- `github-action`
-- `json`
-- `watch-history`
-- `scrobble`
-- `tmdb`
-- `media-tracking`
-- `automation`
-
 ## AI Disclosure
 
 This project was built with the assistance of AI tools (Claude). The design, specification, and implementation were developed collaboratively with AI-generated code. All code has been reviewed and tested, but use at your own discretion.
