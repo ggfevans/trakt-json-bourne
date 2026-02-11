@@ -1,0 +1,44 @@
+# Example workflow for ggfevans/trakt-json-bourne
+#
+# Copy this file to .github/workflows/update-watching-data.yml in your repository,
+# replace "your-trakt-username" with your actual username, and adjust options as needed.
+#
+# Required secrets:
+# - TRAKT_CLIENT_ID (required)
+# - TMDB_API_KEY (optional, for poster enrichment)
+
+name: Update Watching Data
+
+on:
+  schedule:
+    - cron: "0 0 * * *" # daily
+  workflow_dispatch: # manual trigger from Actions tab
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    # This workflow commits and pushes output changes.
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - uses: ggfevans/trakt-json-bourne@v1 # v1
+        with:
+          trakt_client_id: ${{ secrets.TRAKT_CLIENT_ID }}
+          trakt_username: your-trakt-username
+          tmdb_api_key: ${{ secrets.TMDB_API_KEY }}
+
+          # Where to write the JSON file (default: src/data/watching.json)
+          # output_path: src/data/watching.json
+
+          # Number of recent history items to fetch (default: 30)
+          # history_limit: '30'
+
+      - name: Commit and push
+        uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5.2.0
+        with:
+          commit_message: 'chore: update watching data'
+          file_pattern: src/data/watching.json

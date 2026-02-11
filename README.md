@@ -12,7 +12,9 @@ This action runs on schedule, pulls your recent Trakt watch history, optionally 
 
 ## Installation
 
-Add a workflow file (e.g. `.github/workflows/fetch-watching.yml`):
+Copy [`example.yml`](example.yml) to `.github/workflows/fetch-watching.yml` in your repository and replace `your-trakt-username` with your Trakt username.
+
+Or use this minimal snippet:
 
 ```yaml
 name: Fetch Watching Data
