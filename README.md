@@ -19,7 +19,7 @@ GitHub docs:
 - [Creating secrets for a repository](https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository)
 
 Or use this minimal snippet:
-
+ 
 ```yaml
 name: Fetch Watching Data
 
