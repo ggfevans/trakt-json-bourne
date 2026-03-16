@@ -1,3 +1,9 @@
+# macOS
+.DS_Store
+
+# Environment
+.env
+
 # Intermediate files
 /tmp-*
 *.tmp
@@ -5,8 +11,8 @@
 # Test output
 /test-output/
 
-# Local development
-.env
+# Design docs and plans
+/docs/
 
-# macOS
-.DS_Store
+# Worktrees
+/.worktrees/
