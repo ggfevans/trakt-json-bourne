@@ -36,7 +36,7 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
-      - uses: ggfevans/trakt-json-bourne@32396e5fbf699e0cac5af5d5d7cef27bbef20497 # v3.0.0
+      - uses: ggfevans/trakt-json-bourne@79005a28f68a285f6a4295781138423402ec6623 # v3.1.0
         with:
           trakt_client_id: ${{ secrets.TRAKT_CLIENT_ID }}
           trakt_username: your-trakt-username
