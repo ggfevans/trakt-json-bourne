@@ -19,7 +19,7 @@ GitHub docs:
 - [Creating secrets for a repository](https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository)
 
 Or use this minimal snippet:
-
+ 
 ```yaml
 name: Fetch Watching Data
 
@@ -36,7 +36,7 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
-      - uses: ggfevans/trakt-json-bourne@499e6aabaab35c43ccccb852a0498324dca080f2 # v2.0.1
+      - uses: ggfevans/trakt-json-bourne@889ebca81bbd285dd975898226ef558a963c0202 # v2.0.2
         with:
           trakt_client_id: ${{ secrets.TRAKT_CLIENT_ID }}
           trakt_username: your-trakt-username
